@@ -1,2 +1,2 @@
 # Library-Management-System
-This system allows seamless management of book transactions, memberships, and fines, making it ideal for small libraries. It is simple to use, with no complex back-end, focusing instead on basic front-end functionalities for a smooth user experience.
+This Library Management System is a simple web application designed for managing library operations such as book issuance, returns, membership management, and fine payments. It is built using HTML, CSS, and JavaScript, with a focus on simplicity and ease of use.
