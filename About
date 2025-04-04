@@ -1,11 +1,9 @@
-This Library Management System is a simple web application designed for managing library operations such as book issuance, returns, membership management, and fine payments. It is built using HTML, CSS, and JavaScript, with a focus on simplicity and ease of use.
-
 Features:
-Login System:
+1. Login System:
 
 Users can log in as either Admin or User. The admin has full access to manage books, memberships, and fines, while users can only return books and pay fines.
 
-Admin Panel:
+2. Admin Panel:
 
 Issue Books: Admin can issue books by entering a book ID, and if available, it updates the book's status to "issued."
 
@@ -15,20 +13,20 @@ Manage Memberships: Admin can update a user's membership duration (6 months, 1 y
 
 Pay Fine: Admin can process fines, although this functionality is simple in the current version.
 
-User Panel:
+3. User Panel:
 
 Return Books: Users can return borrowed books. If the book is overdue, a fine is calculated and displayed.
 
 Pay Fine: Users can check if they have fines and proceed to pay them (though the actual fine payment process is simplified).
 
-Books Table:
+4. Books Table:
 
 The application displays a table of available books, showing their title, author, and availability. The table is dynamically updated based on user and admin actions.
 
-Fine Calculation:
+5. Fine Calculation:
 
 If a book is returned late, the system calculates a fine of $1 per day based on the overdue days.
 
-User Interface:
+6. User Interface:
 
 The system has a clean and straightforward UI, which is responsive and provides clear feedback, such as error messages for invalid actions.
