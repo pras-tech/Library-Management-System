@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .hidden {
+            display: none;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Library Management System</h1>
+
+<div id="login-section">
+    <h2>Login</h2>
+    <form id="login-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <p id="login-error" class="error hidden">Invalid username or password.</p>
+</div>
+
+<div id="admin-section" class="hidden">
+    <h2>Admin Panel</h2>
+    <button onclick="issueBook()">Issue Book</button>
+    <button onclick="returnBook()">Return Book</button>
+    <button onclick="manageMembership()">Manage Membership</button>
+    <button onclick="payFine()">Pay Fine</button>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<div id="user-section" class="hidden">
+    <h2>User Panel</h2>
+    <button onclick="returnBook()">Return Book</button>
+    <button onclick="payFine()">Pay Fine</button>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<div id="books-section" class="hidden">
+    <h2>Books</h2>
+    <table id="books-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Available</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    // Global variables
+    const users = {
+        "admin": { password: "adminpass", role: "admin" },
+        "user1": { password: "userpass", role: "user" }
+    };
+
+    let books = [
+        { id: 1, title: "Book A", author: "Author A", available: true, serial_no: "001" },
+        { id: 2, title: "Book B", author: "Author B", available: true, serial_no: "002" },
+        { id: 3, title: "Book C", author: "Author C", available: true, serial_no: "003" }
+    ];
+
+    let currentUser = null;
+    let transactions = [];
+
+    // Login functionality
+    document.getElementById('login-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        if (users[username] && users[username].password === password) {
+            currentUser = users[username];
+            document.getElementById('login-section').classList.add('hidden');
+            if (currentUser.role === 'admin') {
+                document.getElementById('admin-section').classList.remove('hidden');
+            } else {
+                document.getElementById('user-section').classList.remove('hidden');
+            }
+            loadBooks();
+        } else {
+            document.getElementById('login-error').classList.remove('hidden');
+        }
+    });
+
+    // Logout functionality
+    function logout() {
+        currentUser = null;
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('admin-section').classList.add('hidden');
+        document.getElementById('user-section').classList.add('hidden');
+        document.getElementById('books-section').classList.add('hidden');
+    }
+
+    // Load books into the table
+    function loadBooks() {
+        const booksTable = document.getElementById('books-table').getElementsByTagName('tbody')[0];
+        booksTable.innerHTML = '';
+        books.forEach(book => {
+            const row = booksTable.insertRow();
+            row.insertCell(0).textContent = book.id;
+            row.insertCell(1).textContent = book.title;
+            row.insertCell(2).textContent = book.author;
+            row.insertCell(3).textContent = book.available ? 'Available' : 'Not Available';
+        });
+        document.getElementById('books-section').classList.remove('hidden');
+    }
+
+    // Issue Book (admin)
+    function issueBook() {
+        const bookId = prompt("Enter Book ID to issue:");
+        const book = books.find(b => b.id === parseInt(bookId));
+
+        if (book && book.available) {
+            book.available = false;
+            const issueDate = new Date();
+            const returnDate = new Date(issueDate);
+            returnDate.setDate(returnDate.getDate() + 15);
+            transactions.push({ bookId: book.id, issueDate, returnDate });
+            alert(`Book "${book.title}" issued. Return by: ${returnDate.toDateString()}`);
+        } else {
+            alert("Invalid Book ID or the book is not available.");
+        }
+    }
+
+    // Return Book (user or admin)
+    function returnBook() {
+        const bookId = prompt("Enter Book ID to return:");
+        const book = books.find(b => b.id === parseInt(bookId));
+
+        if (book && !book.available) {
+            const transaction = transactions.find(t => t.bookId === book.id);
+            const fine = calculateFine(transaction.returnDate);
+            alert(fine > 0 ? `Fine to pay: $${fine}` : "No fine. Book returned successfully.");
+            book.available = true;
+            transactions = transactions.filter(t => t.bookId !== book.id);
+        } else {
+            alert("Invalid Book ID or the book was not issued to you.");
+        }
+    }
+
+    // Calculate fine
+    function calculateFine(returnDate) {
+        const today = new Date();
+        if (today > returnDate) {
+            const overdueDays = Math.floor((today - returnDate) / (1000 * 60 * 60 * 24));
+            return overdueDays * 1; // Fine of $1 per day overdue
+        }
+        return 0;
+    }
+
+    // Manage Membership (user)
+    function manageMembership() {
+        const duration = prompt("Enter membership duration (6 months / 1 year / 2 years):");
+        alert(`Membership updated to ${duration}`);
+    }
+
+    // Pay Fine (user)
+    function payFine() {
+        alert("No fines to pay at the moment.");
+    }
+
+</script>
+
+</body>
+</html>
